@@ -11,6 +11,10 @@ app.use(express.static('public'));
 
 io.on('connection', function(socket) {
   console.log('a user connected');
+  socket.on('clickEvent', function(data) {
+    socket.broadcast.emit('clickEvent', data);
+    console.log(data);
+  });
 });
 
 http.listen(port, () => console.log(`Example app listening on port ${port}!`));

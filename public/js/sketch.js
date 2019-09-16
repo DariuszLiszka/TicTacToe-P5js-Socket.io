@@ -8,6 +8,7 @@ var sketch = function(p) {
   let turn = -1;
   p.setup = function() {
     socket = io.connect('http://localhost:3000/');
+    socket.on('clickEvent', newBoard);
     let cnv = p.createCanvas(600, 600);
     cnv.mousePressed(drawSign);
     p.background(50);
@@ -18,11 +19,38 @@ var sketch = function(p) {
       }
     }
   };
-  function drawSign() {
+  function newBoard(data) {
+    let changedBoard = data.board;
+    let turn = data.turn;
     turn *= -1;
+    console.log(turn);
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (changedBoard[i][j] == 1) {
+          p.ellipse(j * rectWidth + 100, i * rectWidth + 100, 200, 200);
+        }
+        if (changedBoard[i][j] == -1) {
+          p.line(
+            j * rectWidth + 200,
+            i * rectWidth + 200,
+            j * rectWidth,
+            i * rectWidth
+          );
+          p.line(
+            j * rectWidth + 200,
+            i * rectWidth,
+            j * rectWidth,
+            i * rectWidth + 200
+          );
+        }
+      }
+    }
+  }
+  function drawSign() {
     posX = p.int(p.mouseX / rectWidth);
     posY = p.int(p.mouseY / rectWidth);
     if (board[posY][posX] == 0) {
+      turn *= -1;
       board[posY][posX] = turn;
       if (turn == 1) {
         p.ellipse(posX * rectWidth + 100, posY * rectWidth + 100, 200, 200);
@@ -41,6 +69,11 @@ var sketch = function(p) {
           posY * rectWidth + 200
         );
       }
+      data = {
+        board: board,
+        turn: turn
+      };
+      socket.emit('clickEvent', data);
     }
     if (checkWinner(board) == 'o') {
       console.log('the winner is o');
