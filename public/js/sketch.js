@@ -42,9 +42,15 @@ var sketch = function(p) {
         );
       }
     }
-    checkWinner(board);
+    if (checkWinner(board) == 'o') {
+      console.log('the winner is o');
+    }
+    if (checkWinner(board) == 'x') {
+      console.log('the winner is x');
+    }
   }
   function checkWinner(board) {
+    let winner;
     //check rows
     for (let i = 0; i < 3; i++) {
       if (
@@ -52,14 +58,14 @@ var sketch = function(p) {
           return a + b;
         }) == 3
       ) {
-        console.log('o is winner');
+        return (winner = 'o');
       }
       if (
         board[i].reduce((a, b) => {
           return a + b;
         }) == -3
       ) {
-        console.log('x is winner');
+        return (winner = 'x');
       }
     }
     //check cols
@@ -70,27 +76,28 @@ var sketch = function(p) {
       sumFirstCol += board[j][0];
       sumSecondCol += board[j][1];
       sumThirdCol += board[j][2];
-      if (sumFirstCol == 3) console.log('winner is o');
-      if (sumFirstCol == -3) console.log('winner is x');
+      if (sumFirstCol == 3) return (winner = 'o');
+      if (sumFirstCol == -3) return (winner = 'x');
 
-      if (sumSecondCol == 3) console.log('winner is o');
-      if (sumSecondCol == -3) console.log('winner is x');
+      if (sumSecondCol == 3) return (winner = 'o');
+      if (sumSecondCol == -3) return (winner = 'x');
 
-      if (sumThirdCol == 3) console.log('winner is o');
-      if (sumThirdCol == -3) console.log('winner is x');
+      if (sumThirdCol == 3) return (winner = 'o');
+      if (sumThirdCol == -3) return (winner = 'x');
     }
     //check diag
     sumFirstDiag = 0;
     for (let k = 0; k < 3; k++) {
       sumFirstDiag += board[k][k];
-      if (sumFirstDiag == 3) console.log('winner is o');
-      if (sumFirstDiag == -3) console.log('winner is x');
+      if (sumFirstDiag == 3) return (winner = 'o');
+      if (sumFirstDiag == -3) return (winner = 'x');
     }
 
     sumSecondDiag = 0;
     sumSecondDiag = board[0][2] + board[1][1] + board[2][0];
-    if (sumSecondDiag == 3) console.log('winner is o');
-    if (sumSecondDiag == -3) console.log('winner is x');
+    if (sumSecondDiag == 3) return (winner = 'o');
+    if (sumSecondDiag == -3) return (winner = 'x');
+    return winner;
   }
   p.draw = function() {};
 };
