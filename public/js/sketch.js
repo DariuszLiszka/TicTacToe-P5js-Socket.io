@@ -8,20 +8,16 @@ var sketch = function(p) {
   let turn = 0;
   let player = 0;
 
+  let move = 1;
   p.setup = function() {
     socket = io.connect('http://localhost:3000/');
 
     let cnv = p.createCanvas(600, 600);
     cnv.mousePressed(drawSign);
-    // socket.on('newSocket', userConnection);
+
     socket.on('clickEvent', drawBoard);
-    // socket.on('connection', function(client) {
-    //   // Receive ehlo event with data:
-    //   client.on('ehlo', function(data) {
-    //     console.log('data');
-    //   });
-    // });
-    socket.on('ehlo', connectionFunct);
+
+    socket.on('newConnectedUser', connectionFunct);
 
     p.background(50);
     rectWidth = p.width / 3;
@@ -32,7 +28,6 @@ var sketch = function(p) {
     }
   };
   function connectionFunct(data) {
-    console.log(data);
     return (player = data);
   }
 
@@ -40,7 +35,7 @@ var sketch = function(p) {
     posX = data.posX;
     posY = data.posY;
     turn = data.turn;
-    console.log(turn, 'drawboard');
+
     if (board[posY][posX] == 0) {
       board[posY][posX] = turn;
 
@@ -70,34 +65,71 @@ var sketch = function(p) {
     }
   }
   function drawSign() {
-    console.log(player);
     posX = p.int(p.mouseX / rectWidth);
     posY = p.int(p.mouseY / rectWidth);
     turn = player;
-    if (board[posY][posX] == 0) {
-      board[posY][posX] = turn;
 
-      if (turn == 1) {
-        p.ellipse(posX * rectWidth + 100, posY * rectWidth + 100, 200, 200);
-      }
-      if (turn == -1) {
-        p.line(
-          posX * rectWidth + 200,
-          posY * rectWidth + 200,
-          posX * rectWidth,
-          posY * rectWidth
-        );
-        p.line(
-          posX * rectWidth + 200,
-          posY * rectWidth,
-          posX * rectWidth,
-          posY * rectWidth + 200
-        );
+    boardSum = board
+      .reduce(function(a, b) {
+        return a.concat(b);
+      })
+      .reduce(function(a, b) {
+        return a + b;
+      });
+
+    if (boardSum == 0 && turn == 1) {
+      if (board[posY][posX] == 0) {
+        board[posY][posX] = turn;
+
+        if (turn == 1) {
+          p.ellipse(posX * rectWidth + 100, posY * rectWidth + 100, 200, 200);
+        }
+        if (turn == -1) {
+          p.line(
+            posX * rectWidth + 200,
+            posY * rectWidth + 200,
+            posX * rectWidth,
+            posY * rectWidth
+          );
+          p.line(
+            posX * rectWidth + 200,
+            posY * rectWidth,
+            posX * rectWidth,
+            posY * rectWidth + 200
+          );
+        }
       }
 
       sendData(posX, posY, turn);
       return (clicked = true);
     }
+    if (boardSum == 1 && turn == -1) {
+      if (board[posY][posX] == 0) {
+        board[posY][posX] = turn;
+
+        if (turn == 1) {
+          p.ellipse(posX * rectWidth + 100, posY * rectWidth + 100, 200, 200);
+        }
+        if (turn == -1) {
+          p.line(
+            posX * rectWidth + 200,
+            posY * rectWidth + 200,
+            posX * rectWidth,
+            posY * rectWidth
+          );
+          p.line(
+            posX * rectWidth + 200,
+            posY * rectWidth,
+            posX * rectWidth,
+            posY * rectWidth + 200
+          );
+        }
+      }
+
+      sendData(posX, posY, turn);
+      return (clicked = true);
+    }
+
     if (checkWinner(board) == 'o') {
       console.log('the winner is o');
     }

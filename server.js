@@ -4,6 +4,7 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const port = 3000;
 let clients = [];
+let moves = [];
 // app.get('/', function(req, res) {
 //   res.sendFile(__dirname + '/index.html');
 // });
@@ -11,23 +12,22 @@ app.use(express.static('public'));
 
 io.sockets.on('connection', function(socket) {
   clients.push(socket.id);
-  console.log(clients);
+
   if (clients.length == 1) {
     turn = 1;
-    socket.emit('ehlo', turn);
+    socket.emit('newConnectedUser', turn);
   }
   if (clients.length == 2) {
     turn = -1;
-    socket.emit('ehlo', turn);
+    socket.emit('newConnectedUser', turn);
   }
   if (clients.length > 3) {
     turn = null;
-    socket.emit('ehlo', turn);
+    socket.emit('newConnectedUser', turn);
   }
 
   socket.on('clickEvent', function(data) {
     socket.broadcast.emit('clickEvent', data);
-    console.log(data);
   });
 
   socket.on('disconnect', function() {
