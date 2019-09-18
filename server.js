@@ -5,9 +5,7 @@ const io = require('socket.io')(http);
 const port = 3000;
 let clients = [];
 let moves = [];
-// app.get('/', function(req, res) {
-//   res.sendFile(__dirname + '/index.html');
-// });
+
 app.use(express.static('public'));
 
 io.sockets.on('connection', function(socket) {

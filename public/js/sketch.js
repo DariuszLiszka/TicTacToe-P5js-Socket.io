@@ -8,7 +8,7 @@ var sketch = function(p) {
   let turn = 0;
   let player = 0;
 
-  let move = 1;
+  
   p.setup = function() {
     socket = io.connect('http://localhost:3000/');
 
