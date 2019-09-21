@@ -1,3 +1,5 @@
+
+// do not use vars
 var sketch = function(p) {
   let socket;
   let rectWidth;
@@ -6,27 +8,39 @@ var sketch = function(p) {
   let posY;
   let board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
   let turn = 0;
+
+  // enum for players
+  // OPPONENT_1: 0
+  // OPPONENT_2: 1
   let player = 0;
 
   
   p.setup = function() {
+    // use from environment variable || config
     socket = io.connect('http://localhost:3000/');
 
+
+    // use const if no reassign 
+    // do not use magic numbers (600, 600)
     let cnv = p.createCanvas(600, 600);
     cnv.mousePressed(drawSign);
 
     socket.on('clickEvent', drawBoard);
-
     socket.on('newConnectedUser', connectionFunct);
 
     p.background(50);
+  
     rectWidth = p.width / 3;
+    
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
         p.rect(i * rectWidth, j * rectWidth, 200, 200);
       }
     }
   };
+
+  // nie hardkodowac ani stringow ani liczb
+
   function connectionFunct(data) {
     return (player = data);
   }
@@ -43,6 +57,7 @@ var sketch = function(p) {
         p.ellipse(posX * rectWidth + 100, posY * rectWidth + 100, 200, 200);
       }
       if (turn == -1) {
+
         p.line(
           posX * rectWidth + 200,
           posY * rectWidth + 200,
@@ -197,4 +212,5 @@ var sketch = function(p) {
   }
   p.draw = function() {};
 };
+
 var myp5 = new p5(sketch);

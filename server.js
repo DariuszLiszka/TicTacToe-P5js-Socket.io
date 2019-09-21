@@ -3,10 +3,15 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const port = 3000;
+
+// use abstractaction for inmemory database or use some library (memcached || redis)
 let clients = [];
 let moves = [];
 
+// separate client code from server code
 app.use(express.static('public'));
+
+// more layers
 
 io.sockets.on('connection', function(socket) {
   clients.push(socket.id);
@@ -25,6 +30,7 @@ io.sockets.on('connection', function(socket) {
   }
 
   socket.on('clickEvent', function(data) {
+    // no validaiton for movment
     socket.broadcast.emit('clickEvent', data);
   });
 
